@@ -14,6 +14,11 @@ class PMPro_Donation
 {
     private static $instance = null;
 
+	// required plugins to used in this application
+	var $required_plugins = array(
+		'Paid Memberships Pro' => 'paid-memberships-pro/paid-memberships-pro.php'
+	);
+
     /**
      * Return an instance of this class.
      *
@@ -33,6 +38,8 @@ class PMPro_Donation
 
     function __construct()
     {
+	    if (!$this->required_plugins_active()) return;
+
         global $table_prefix, $wpdb;
         $wpdb->pmpro_membership_orders_meta = $table_prefix . 'pmpro_membership_orders_meta';
 
@@ -47,9 +54,25 @@ class PMPro_Donation
         add_action('pmpro_invoice_bullets_bottom', array($this, 'pmpro_invoice_bullets_bottom'));
     }
 
-    /*
-        Min Amount and Max Amount Fields on the edit levels page
-    */
+	function required_plugins_active()
+	{
+		$status = true;
+		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+		foreach ($this->required_plugins as $name => $plugin) {
+			if (is_plugin_active($plugin)) continue;
+			?>
+			<div class="error">
+				<p>PMPro Donation plugin requires <strong><?php echo $name ?></strong> plugin to be installed and activated</p>
+			</div>
+			<?php
+			$status = false;
+		}
+		return $status;
+	}
+
+	/*
+		Min Amount and Max Amount Fields on the edit levels page
+	*/
     //fields on edit page
     function pmpro_membership_level_after_other_settings()
     {
