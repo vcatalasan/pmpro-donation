@@ -207,18 +207,18 @@ class PMPro_Donation
                     var add_amount = isNaN(parseFloat(this.value)) ? 0 : parseFloat(this.value);
                     donation_amount = <?php echo $min_amount ?> + add_amount;
                     $('#donation-amount').attr('value', donation_amount);
-                    pmprovp_price_timer = setTimeout(pmprovp_checkForFree, 500);
+                    pmprovp_price_timer = setTimeout(pmprovp_checkForFree, 000);
                 });
 
                 $('#donation-optin').click(function() {
                     this.checked ? $('#donation-amount').attr('value', <?php echo $amount ?>) : $('#donation-amount').attr('value', 0);
-                    pmprovp_price_timer = setTimeout(pmprovp_checkForFree, 500);
+                    pmprovp_price_timer = setTimeout(pmprovp_checkForFree, 000);
                 });
 
 
                 if ($('input[name=gateway]')) {
                     $('input[name=gateway]').bind('click', function () {
-                        pmprovp_price_timer = setTimeout(pmprovp_checkForFree, 500);
+                        pmprovp_price_timer = setTimeout(pmprovp_checkForFree, 000);
                     });
                 }
 
