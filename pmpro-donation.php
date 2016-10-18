@@ -91,7 +91,8 @@ class PMPro_Donation
                 <th scope="row" valign="top"><label for="level_cost_text">Enable Donation:</label></th>
                 <td>
                     <input type="checkbox" name="donation[new]" value="1" <?php checked($donation['new'], "1");?> /> New Membership<br/>
-                    <input type="checkbox" name="donation[renewal]" value="1" <?php checked($donation['renewal'], "1");?> /> Membership Renewal
+                    <input type="checkbox" name="donation[renewal]" value="1" <?php checked($donation['renewal'], "1");?> /> Membership Renewal<br />
+                    <input type="checkbox" name="donation[checked]" value="1" <?php checked($donation['checked'], "1");?> /> Checked By Default (Opt-In)
                 </td>
             </tr>
             <tr>
@@ -185,14 +186,16 @@ class PMPro_Donation
         $amount = $min_amount;
         ?>
         <div class="product-addon">
-            <p><input type="checkbox" id="donation-optin" checked="checked" /> I would like to make a one time <strong><?php echo $pmpro_currency_symbol . $min_amount ?></strong> donation
+            <p><input type="checkbox" id="donation-optin" <?php echo $donation['checked'] ? 'checked="checked"' : '' ?>/> I would like to make a one time <strong><?php echo $pmpro_currency_symbol . $min_amount ?></strong> donation
             <?php if ($variable_amount) {
                 $add_amount = $max_amount - $min_amount;
                 $amount += $add_amount; ?>
                 plus an additional <?php echo $pmpro_currency_symbol ?> <input type="text" id="add-amount" size="10" value="<?php echo $add_amount;?>" />
-            <?php } ?>
+            <?php }
+            $donation_amount = $donation['checked'] ? $amount : 0;
+            ?>
             <input type="hidden" id="donation-amount" name="donation_amount" size="10" value="<?php echo $amount;?>" /></p>
-            <p>Total Amount: <strong><?php echo $pmpro_currency_symbol ?><span id="total-amount"><?php echo $membership_amount + $amount ?></span></strong></p>
+            <p>Total Amount: <strong><?php echo $pmpro_currency_symbol ?><span id="total-amount"><?php echo $membership_amount + $donation_amount ?></span></strong></p>
         </div>
         <script>
             //some vars for keeping track of whether or not we show billing
@@ -210,11 +213,7 @@ class PMPro_Donation
                     pmprovp_price_timer = setTimeout(pmprovp_checkForFree, 000);
                 });
 
-                $('#donation-optin').click(function() {
-                    this.checked ? $('#donation-amount').attr('value', <?php echo $amount ?>) : $('#donation-amount').attr('value', 0);
-                    pmprovp_price_timer = setTimeout(pmprovp_checkForFree, 000);
-                });
-
+                $('#donation-optin').click( pmprovp_checkForFree );
 
                 if ($('input[name=gateway]')) {
                     $('input[name=gateway]').bind('click', function () {
@@ -224,7 +223,7 @@ class PMPro_Donation
 
                 function update_total() {
                     var membership_amount = <?php echo $membership_amount ?>;
-                    var donation_amount = parseFloat($('#donation-amount').val());
+                    var donation_amount = $('#donation-optin').is(':checked') ? parseFloat($('#donation-amount').val()) : 0;
                     $('#total-amount').html( membership_amount + donation_amount );
                 }
 
