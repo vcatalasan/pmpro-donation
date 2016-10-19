@@ -52,6 +52,8 @@ class PMPro_Donation
         add_filter('pmpro_checkout_order', array($this, 'pmpro_checkout_order'));
         add_action('pmpro_added_order', array($this, 'pmpro_added_order'));
         add_action('pmpro_invoice_bullets_bottom', array($this, 'pmpro_invoice_bullets_bottom'));
+
+        session_start();
     }
 
 	function required_plugins_active()
@@ -235,6 +237,12 @@ class PMPro_Donation
                 function update_total() {
                     var membership_amount = <?php echo $membership_amount ?>;
                     var donation_amount = $('#donation-optin').is(':checked') ? parseFloat($('#donation-amount').val()) : 0;
+                    if (donation_amount > 0) {
+                        //highlight it
+                        $('#donation-optin').parent().css("background-color", "#fdc");
+                    } else {
+                        $('#donation-optin').parent().css("background-color", "");
+                    }
                     $('#total-amount').html( membership_amount + donation_amount );
                 }
 
