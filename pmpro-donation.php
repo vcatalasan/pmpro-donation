@@ -52,8 +52,6 @@ class PMPro_Donation
         add_filter('pmpro_checkout_order', array($this, 'pmpro_checkout_order'));
         add_action('pmpro_added_order', array($this, 'pmpro_added_order'));
         add_action('pmpro_invoice_bullets_bottom', array($this, 'pmpro_invoice_bullets_bottom'));
-
-        session_start();
     }
 
 	function required_plugins_active()
