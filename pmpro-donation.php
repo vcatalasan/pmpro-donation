@@ -3,7 +3,7 @@
 Plugin Name: PMPro Donation
 Plugin URI: http://www.bscmanage.com/my-plugin/pmpro-donation
 Description: Add donation as an option on membership level checkout process
-Version: 0.1.0
+Version: 1.0.0
 License: MPL
 Author: Val Catalasan
 */
@@ -171,18 +171,17 @@ class PMPro_Donation
         if (!$enable)
             return;
 
+        $donation_amount = floatval($_REQUEST['donation']);
+        isset($_REQUEST['donation']) and $donation['checked'] = $donation_amount > 0;
+
         //okay, now we're showing the form
         $min_amount = $fields['min_amount'];
         $max_amount = $fields['max_amount'];
         $max_amount < $min_amount and $max_amount = $min_amount;
+        $donation_amount >= $min_amount and $max_amount = $donation_amount;
 
         $variable_amount = $min_amount != $max_amount;
 
-        /*
-        if (isset($_REQUEST['donation_amount']) && $pmpro_msgt != 'pmpro_error')
-            $amount= preg_replace("[^0-9\.]", "", $_REQUEST['donation_amount']);
-        else
-        */
         $amount = $min_amount;
         ?>
         <div class="product-addon">
@@ -220,6 +219,18 @@ class PMPro_Donation
                         pmprovp_price_timer = setTimeout(pmprovp_checkForFree, 000);
                     });
                 }
+
+                $('#pmpro_checkout_boxes a').click( function() {
+                    // add donation amount to query string
+                    var href = $(this).attr('href') + "&donation=";
+                    if ($('#donation-optin').is(':checked')) {
+                         href += $('#donation-amount').val();
+                    } else {
+                        // no donation
+                        href += "0";
+                    }
+                    $(this).attr('href', href);
+                });
 
                 function update_total() {
                     var membership_amount = <?php echo $membership_amount ?>;
