@@ -193,7 +193,7 @@ class PMPro_Donation
             <?php }
             $donation_amount = $donation['checked'] ? $amount : 0;
             ?>
-            <input type="hidden" id="donation-amount" name="donation_amount" size="10" value="<?php echo $amount;?>" /></p>
+            <input type="hidden" id="donation-amount" name="donation_amount" size="10" value="0" /></p>
             <p>Total Amount: <strong><?php echo $pmpro_currency_symbol ?><span id="total-amount"><?php echo $membership_amount + $donation_amount ?></span></strong></p>
         </div>
         <script>
@@ -232,16 +232,24 @@ class PMPro_Donation
                     $(this).attr('href', href);
                 });
 
+                function get_donation_amount() {
+                    var is_variable_amount = <?php echo $variable_amount ? 1 : 0 ?>;
+                    var min_amount = parseFloat(<?php echo $min_amount ?>);
+                    var add_amount = is_variable_amount ? parseFloat($('#add-amount').val()) : 0;
+                    return min_amount + add_amount;
+                }
+
                 function update_total() {
                     var membership_amount = <?php echo $membership_amount ?>;
-                    var donation_amount = $('#donation-optin').is(':checked') ? parseFloat($('#donation-amount').val()) : 0;
-                    if (donation_amount > 0) {
+                    var donation = $('#donation-optin').is(':checked') ? get_donation_amount() : 0;
+                    if (donation > 0) {
                         //highlight it
                         $('#donation-optin').parent().css("background-color", "#fdc");
                     } else {
                         $('#donation-optin').parent().css("background-color", "");
                     }
-                    $('#total-amount').html( membership_amount + donation_amount );
+                    $('#donation-amount').val(donation);
+                    $('#total-amount').html( membership_amount + donation );
                 }
 
                 function pmprovp_checkForFree() {
